@@ -367,7 +367,7 @@ public class MainViewController {
                         UUID.randomUUID().toString(),
                         selectedDirectory.getName(),
                         selectedDirectory.getAbsolutePath(),
-                        "Generate a conventional commit message for the following changes:"
+                        "根据代码变更生成提交信息\n\n1.中文响应\n2.符合git commit规范\n3.只输出git commit内容，去掉markdown标签\n4.参考最近提交的commit风格\n5.合并到一次commit"
                 );
 
                 var updatedProjects = new ArrayList<>(appConfig.projects());
