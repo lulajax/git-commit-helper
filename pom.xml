@@ -128,7 +128,7 @@
                     <input>${project.build.directory}/jpackage-input</input>
                     <mainJar>git-commit-helper-${project.version}.jar</mainJar>
                     <mainClass>com.junjie.githelper.MainApplication</mainClass>
-                    <type>${jpackage.type}</type>
+                    <type>${env.JPACKAGE_TYPE}</type>
                     <!-- <winConsole>true</winConsole> -->
                     <javaOptions>
                         <option>-Dfile.encoding=UTF-8</option>
