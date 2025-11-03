@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.user</groupId>
-    <artifactId>git-commit-helper</artifactId>
+    <artifactId>Commit-Pal</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <properties>
@@ -126,7 +126,7 @@
                     <description>Git Commit Helper - 智能提交信息生成工具</description>
                     <destination>${project.build.directory}/installer</destination>
                     <input>${project.build.directory}/jpackage-input</input>
-                    <mainJar>git-commit-helper-${project.version}.jar</mainJar>
+                    <mainJar>Commit-Pal-${project.version}.jar</mainJar>
                     <mainClass>com.junjie.githelper.MainApplication</mainClass>
                     <type>${env.JPACKAGE_TYPE}</type>
                     <!-- <winConsole>true</winConsole> -->

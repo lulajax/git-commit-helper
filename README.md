@@ -21,7 +21,7 @@
 ## 项目结构
 
 ```
-git-commit-helper/
+Commit-Pal/
 ├── lib/                    # JavaFX 依赖库（已包含，无需单独下载）
 ├── src/
 │   ├── main/
@@ -81,7 +81,7 @@ mvn clean javafx:run
 
 首次运行时，应用会在用户主目录下创建配置文件：
 ```
-~/.git-commit-helper/config.json
+~/.Commit-Pal/config.json
 ```
 
 配置包括：
