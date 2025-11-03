@@ -40,19 +40,34 @@ jobs:
     - name: Build with Maven
       run: mvn -B package -D T
       
+    - name: List target directory contents (Linux)
+      if: runner.os == 'Linux'
+      run: ls -R target
+
+    - name: List target directory contents (Windows)
+      if: runner.os == 'Windows'
+      run: Get-ChildItem -Path target -Recurse
+      
+    - name: List target directory contents (macOS)
+      if: runner.os == 'macOS'
+      run: ls -R target
+      
     - name: Rename artifact on Linux
       if: runner.os == 'Linux'
       run: |
+        mkdir -p target/installer
         mv target/installer/*.deb target/installer/CommitPal-linux-amd64.deb
         
     - name: Rename artifact on Windows
       if: runner.os == 'Windows'
       run: |
+        New-Item -ItemType Directory -Force -Path target/installer
         mv target/installer/*.msi target/installer/CommitPal-windows-amd64.msi
 
     - name: Rename artifact on macOS
       if: runner.os == 'macOS'
       run: |
+        mkdir -p target/installer
         mv target/jpackage/*.dmg target/installer/CommitPal-macos-amd64.dmg
         
     - name: Upload Artifact
