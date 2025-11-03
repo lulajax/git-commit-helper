@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class ConfigService {
 
-    private static final Path CONFIG_DIR = Path.of(System.getProperty("user.home"), ".Commit-Pal");
+    private static final Path CONFIG_DIR = Path.of(System.getProperty("user.home"), ".commit-pal");
     private static final Path CONFIG_FILE = CONFIG_DIR.resolve("config.json");
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 

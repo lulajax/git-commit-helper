@@ -1,4 +1,4 @@
-# Commit-Pal
+# commit-pal
 
 一个基于 JavaFX 的 智能 Git 提交信息生成工具。它是一个桌面应用程序，旨在利用 AI 的强大能力，将繁琐的 git commit 信息撰写过程变得智能、高效且充满乐趣。它能自动分析您的代码变更，并结合您为每个项目量身定制的提示词（Prompt），生成高质量、符合规范的提交日志
 
@@ -21,7 +21,7 @@
 ## 项目结构
 
 ```
-Commit-Pal/
+commit-pal/
 ├── lib/                    # JavaFX 依赖库（已包含，无需单独下载）
 ├── src/
 │   ├── main/
@@ -81,7 +81,7 @@ mvn clean javafx:run
 
 首次运行时，应用会在用户主目录下创建配置文件：
 ```
-~/.Commit-Pal/config.json
+~/.commit-pal/config.json
 ```
 
 配置包括：

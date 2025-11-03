@@ -6,7 +6,7 @@
             "name": "Debug JavaFX Application",
             "request": "launch",
             "mainClass": "com.junjie.githelper.MainApplication",
-            "projectName": "Commit-Pal",
+            "projectName": "commit-pal",
             "vmArgs": "--module-path \"${workspaceFolder}/lib\" --add-modules javafx.controls,javafx.fxml",
             "console": "integratedTerminal"
         }
