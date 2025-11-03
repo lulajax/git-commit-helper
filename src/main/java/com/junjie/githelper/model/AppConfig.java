@@ -16,7 +16,7 @@ public record AppConfig(
     
     private static String getDefaultWeeklyReportPrompt() {
         return """
-                请根据以下 Git 提交日志，生成一份简洁的研发周报。
+                请根据以下 Git 提交日志，生成一份简洁的提交报告。
                 
                 要求：
                 1. 总结本周主要完成的功能和改进

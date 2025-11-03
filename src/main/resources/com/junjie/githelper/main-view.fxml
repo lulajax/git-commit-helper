@@ -48,8 +48,8 @@
                 </ScrollPane>
             </Tab>
             
-            <!-- 研发周报 Tab -->
-            <Tab fx:id="weeklyReportTab" text="研发周报">
+            <!-- 提交报告 Tab -->
+            <Tab fx:id="weeklyReportTab" text="提交报告">
                 <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="edge-to-edge">
                     <VBox spacing="15" style="-fx-padding: 20;">
                         <VBox spacing="10">
@@ -70,7 +70,7 @@
                         </VBox>
                         
                         <VBox spacing="8">
-                            <Label text="研发周报" styleClass="title-4"/>
+                            <Label text="提交报告" styleClass="title-4"/>
                             <TextArea fx:id="weeklyReportTextArea" wrapText="true" 
                                       minHeight="100" prefHeight="200" prefRowCount="8"/>
                         </VBox>

@@ -519,7 +519,7 @@ public class MainViewController {
                 useProxyCheckBox.isSelected()
         );
         
-        weeklyReportTextArea.setText("正在生成研发周报...");
+        weeklyReportTextArea.setText("正在生成提交报告...");
         
         // 在后台线程生成周报
         new Thread(() -> {
