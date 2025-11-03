@@ -240,6 +240,12 @@ public class MainViewController {
             return;
         }
 
+        Project selectedProject = projectListView.getSelectionModel().getSelectedItem();
+        if (selectedProject == null) {
+            commitMessageTextArea.setText("Please select a project.");
+            return;
+        }
+
         String customPrompt = customPromptTextArea.getText();
         
         // 解析代理端口
@@ -266,7 +272,8 @@ public class MainViewController {
         commitMessageTextArea.setText("Generating commit message...");
         new Thread(() -> {
             try {
-                String commitMessage = llmService.generateCommitMessage(settings, customPrompt, diffContent);
+                String recentCommits = gitService.getRecentCommitMessages(selectedProject);
+                String commitMessage = llmService.generateCommitMessage(settings, customPrompt, diffContent, recentCommits);
                 Platform.runLater(() -> commitMessageTextArea.setText(commitMessage));
             } catch (Exception e) {
                 Platform.runLater(() -> commitMessageTextArea.setText("Error: " + e.getMessage()));
@@ -517,7 +524,7 @@ public class MainViewController {
         // 在后台线程生成周报
         new Thread(() -> {
             try {
-                String weeklyReport = llmService.generateCommitMessage(settings, reportPrompt, commitLogs);
+                String weeklyReport = llmService.generateWeeklyReport(settings, reportPrompt, commitLogs);
                 Platform.runLater(() -> weeklyReportTextArea.setText(weeklyReport));
             } catch (Exception e) {
                 Platform.runLater(() -> {

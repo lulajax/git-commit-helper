@@ -15,6 +15,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 
@@ -35,6 +37,21 @@ public class GitService {
                .call();
             
             return outputStream.toString();
+        }
+    }
+
+    public String getRecentCommitMessages(Project project) throws IOException, GitAPIException {
+        File repoDir = new File(project.path());
+
+        try (Repository repository = new FileRepositoryBuilder()
+            .setGitDir(new File(repoDir, ".git"))
+            .build();
+             Git git = new Git(repository)) {
+
+            Iterable<RevCommit> commits = git.log().setMaxCount(5).call();
+            return StreamSupport.stream(commits.spliterator(), false)
+                .map(RevCommit::getShortMessage)
+                .collect(Collectors.joining("\n"));
         }
     }
 

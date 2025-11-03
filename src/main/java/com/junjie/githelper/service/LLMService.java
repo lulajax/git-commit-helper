@@ -13,15 +13,26 @@ import java.util.Map;
 
 public class LLMService {
 
-    public String generateCommitMessage(LLMSettings settings, String customPrompt, String diffContent) {
-        String fullPrompt = customPrompt + "\n\n" + diffContent;
+    public String generateCommitMessage(LLMSettings settings, String customPrompt, String diffContent, String recentCommits) {
+        String fullPrompt = customPrompt + "\n\n" +
+            "Recent commit messages for reference:\n" + recentCommits + "\n\n" +
+            "Staged changes:\n" + diffContent;
 
+        return executeLLMRequest(settings, fullPrompt);
+    }
+
+    public String generateWeeklyReport(LLMSettings settings, String reportPrompt, String commitLogs) {
+        String fullPrompt = reportPrompt + "\n\n" + commitLogs;
+        return executeLLMRequest(settings, fullPrompt);
+    }
+
+    private String executeLLMRequest(LLMSettings settings, String fullPrompt) {
         // OpenAI API compatible request body
         Map<String, Object> requestBody = Map.of(
-                "model", settings.model(),
-                "messages", List.of(
-                        Map.of("role", "user", "content", fullPrompt)
-                )
+            "model", settings.model(),
+            "messages", List.of(
+                Map.of("role", "user", "content", fullPrompt)
+            )
         );
         Gson gson = new Gson();
 
@@ -29,14 +40,14 @@ public class LLMService {
 
         // 构建 HTTP 请求
         HttpRequest request = HttpRequest.post(settings.base_url() + "/chat/completions")
-                .header("Authorization", "Bearer " + settings.api_key())
-                .header("Content-Type", "application/json")
-                .body(jsonBody)
-                .timeout(30000); // 30 seconds timeout
+            .header("Authorization", "Bearer " + settings.api_key())
+            .header("Content-Type", "application/json")
+            .body(jsonBody)
+            .timeout(30000); // 30 seconds timeout
 
         // 如果启用了代理，则设置代理
         if (settings.isProxyEnabled()) {
-            Proxy proxy = new Proxy(Proxy.Type.HTTP, 
+            Proxy proxy = new Proxy(Proxy.Type.HTTP,
                 new InetSocketAddress(settings.proxy_host(), settings.proxy_port()));
             request.setProxy(proxy);
         }
@@ -48,11 +59,11 @@ public class LLMService {
             // Parse the response to get the content of the message
             JsonObject jsonResponse = gson.fromJson(responseBody, JsonObject.class);
             return jsonResponse.getAsJsonArray("choices")
-                               .get(0).getAsJsonObject()
-                               .getAsJsonObject("message")
-                               .get("content").getAsString();
+                .get(0).getAsJsonObject()
+                .getAsJsonObject("message")
+                .get("content").getAsString();
         } else {
-            throw new RuntimeException("Failed to generate commit message: " + response.getStatus() + " " + response.body());
+            throw new RuntimeException("Failed to generate content: " + response.getStatus() + " " + response.body());
         }
     }
 }
