@@ -22,7 +22,7 @@
     <center>
         <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
             <!-- 提交信息 Tab -->
-            <Tab fx:id="commitTab" text="📝 提交信息">
+            <Tab fx:id="commitTab" text="提交信息">
                 <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="edge-to-edge">
                     <VBox spacing="15" style="-fx-padding: 20;">
                         <VBox spacing="8">
@@ -31,7 +31,7 @@
                                       minHeight="100" prefHeight="250" prefRowCount="10"/>
                         </VBox>
                         
-                        <Button text="🔄 Refresh" fx:id="refreshButton" prefWidth="120" styleClass="accent"/>
+                        <Button text="Refresh" fx:id="refreshButton" prefWidth="120" styleClass="accent"/>
 
                         <VBox spacing="8">
                             <Label text="Commit Message" styleClass="title-4"/>
@@ -40,16 +40,16 @@
                         </VBox>
                         
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Button text="✨ Generate" fx:id="generateButton" prefWidth="120" styleClass="accent"/>
-                            <Button text="📋 Copy" fx:id="copyButton" prefWidth="120"/>
-                            <Button text="✅ Commit" fx:id="commitButton" prefWidth="120" styleClass="success"/>
+                            <Button text="Generate" fx:id="generateButton" prefWidth="120" styleClass="accent"/>
+                            <Button text="Copy" fx:id="copyButton" prefWidth="120"/>
+                            <Button text="Commit" fx:id="commitButton" prefWidth="120" styleClass="success"/>
                         </HBox>
                     </VBox>
                 </ScrollPane>
             </Tab>
             
             <!-- 研发周报 Tab -->
-            <Tab fx:id="weeklyReportTab" text="📊 研发周报">
+            <Tab fx:id="weeklyReportTab" text="研发周报">
                 <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="edge-to-edge">
                     <VBox spacing="15" style="-fx-padding: 20;">
                         <VBox spacing="10">
@@ -59,7 +59,7 @@
                                 <DatePicker fx:id="startDatePicker" promptText="选择开始日期" prefWidth="150"/>
                                 <Label text="结束日期:"/>
                                 <DatePicker fx:id="endDatePicker" promptText="选择结束日期" prefWidth="150"/>
-                                <Button text="📅 获取提交日志" fx:id="fetchLogsButton" prefWidth="140" styleClass="accent"/>
+                                <Button text="获取提交日志" fx:id="fetchLogsButton" prefWidth="140" styleClass="accent"/>
                             </HBox>
                         </VBox>
                         
@@ -76,8 +76,8 @@
                         </VBox>
                         
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Button text="✨ 生成周报" fx:id="generateReportButton" prefWidth="120" styleClass="accent"/>
-                            <Button text="📋 复制周报" fx:id="copyReportButton" prefWidth="120"/>
+                            <Button text="生成周报" fx:id="generateReportButton" prefWidth="120" styleClass="accent"/>
+                            <Button text="复制周报" fx:id="copyReportButton" prefWidth="120"/>
                         </HBox>
                     </VBox>
                 </ScrollPane>
@@ -86,76 +86,75 @@
     </center>
 
     <right>
-        <ScrollPane fitToWidth="true" minWidth="200" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
-                    style="-fx-background-color: -color-bg-subtle;">
-            <VBox spacing="15" minWidth="190" prefWidth="280" maxWidth="400" style="-fx-padding: 15;">
-                <VBox spacing="10">
-                    <Label text="⚙️ LLM Settings" styleClass="title-4"/>
-                    <GridPane hgap="8" vgap="10">
-                        <columnConstraints>
-                            <ColumnConstraints minWidth="60" prefWidth="75" hgrow="NEVER"/>
-                            <ColumnConstraints minWidth="100" prefWidth="150" hgrow="ALWAYS"/>
-                        </columnConstraints>
-                        <Label text="Provider:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                        <TextField fx:id="providerTextField" GridPane.rowIndex="0" GridPane.columnIndex="1" 
+        <VBox spacing="10" minWidth="240" prefWidth="350" maxWidth="500" 
+              style="-fx-padding: 15; -fx-background-color: -color-bg-subtle;">
+            <VBox spacing="8">
+                <Label text="LLM Settings" styleClass="title-4"/>
+                <GridPane hgap="8" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="60" prefWidth="75" hgrow="NEVER"/>
+                        <ColumnConstraints minWidth="100" prefWidth="150" hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <Label text="Provider:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="providerTextField" GridPane.rowIndex="0" GridPane.columnIndex="1" 
+                               maxWidth="Infinity"/>
+                    <Label text="API Key:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <PasswordField fx:id="apiKeyField" GridPane.rowIndex="1" GridPane.columnIndex="1" 
                                    maxWidth="Infinity"/>
-                        <Label text="API Key:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <PasswordField fx:id="apiKeyField" GridPane.rowIndex="1" GridPane.columnIndex="1" 
-                                       maxWidth="Infinity"/>
-                        <Label text="Model:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                        <TextField fx:id="modelTextField" GridPane.rowIndex="2" GridPane.columnIndex="1" 
-                                   maxWidth="Infinity"/>
-                        <Label text="Base URL:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                        <TextField fx:id="baseUrlTextField" GridPane.rowIndex="3" GridPane.columnIndex="1" 
-                                   maxWidth="Infinity"/>
-                    </GridPane>
-                </VBox>
-                
-                <Separator/>
-                
-                <VBox spacing="10">
-                    <Label text="🌐 Proxy Settings" styleClass="title-4"/>
-                    <CheckBox fx:id="useProxyCheckBox" text="Enable Proxy"/>
-                    <GridPane hgap="8" vgap="10">
-                        <columnConstraints>
-                            <ColumnConstraints minWidth="60" prefWidth="75" hgrow="NEVER"/>
-                            <ColumnConstraints minWidth="100" prefWidth="150" hgrow="ALWAYS"/>
-                        </columnConstraints>
-                        <Label text="Proxy Host:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                        <TextField fx:id="proxyHostTextField" GridPane.rowIndex="0" GridPane.columnIndex="1" 
-                                   promptText="127.0.0.1" maxWidth="Infinity"/>
-                        <Label text="Proxy Port:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <TextField fx:id="proxyPortTextField" GridPane.rowIndex="1" GridPane.columnIndex="1" 
-                                   promptText="7890" maxWidth="Infinity"/>
-                    </GridPane>
-                </VBox>
-                
-                <Button text="💾 Save Settings" fx:id="saveSettingsButton" prefWidth="140" 
-                        maxWidth="Infinity" styleClass="accent"/>
-
-                <Separator/>
-                
-                <!-- Commit Prompt 区域 -->
-                <VBox fx:id="commitPromptSection" spacing="10">
-                    <Label text="📝 Commit Prompt" styleClass="title-4"/>
-                    <TextArea fx:id="customPromptTextArea" prefHeight="100" minHeight="60" 
-                              wrapText="true" prefRowCount="5"/>
-                    <Button text="💾 Save Prompt" fx:id="savePromptButton" prefWidth="140" 
-                            maxWidth="Infinity" styleClass="accent"/>
-                </VBox>
-                
-                <Separator fx:id="promptSeparator"/>
-                
-                <!-- Weekly Report Prompt 区域 -->
-                <VBox fx:id="weeklyReportPromptSection" spacing="10" visible="false" managed="false">
-                    <Label text="📊 Report Prompt" styleClass="title-4"/>
-                    <TextArea fx:id="weeklyReportPromptTextArea" prefHeight="100" minHeight="60" 
-                              wrapText="true" prefRowCount="5"/>
-                    <Button text="💾 Save Prompt" fx:id="saveReportPromptButton" prefWidth="140" 
-                            maxWidth="Infinity" styleClass="accent"/>
-                </VBox>
+                    <Label text="Model:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="modelTextField" GridPane.rowIndex="2" GridPane.columnIndex="1" 
+                               maxWidth="Infinity"/>
+                    <Label text="Base URL:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <TextField fx:id="baseUrlTextField" GridPane.rowIndex="3" GridPane.columnIndex="1" 
+                               maxWidth="Infinity"/>
+                </GridPane>
             </VBox>
-        </ScrollPane>
+            
+            <Separator/>
+            
+            <VBox spacing="8">
+                <Label text="Proxy Settings" styleClass="title-4"/>
+                <CheckBox fx:id="useProxyCheckBox" text="Enable Proxy"/>
+                <GridPane hgap="8" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="60" prefWidth="75" hgrow="NEVER"/>
+                        <ColumnConstraints minWidth="100" prefWidth="150" hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <Label text="Host:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="proxyHostTextField" GridPane.rowIndex="0" GridPane.columnIndex="1" 
+                               promptText="127.0.0.1" maxWidth="Infinity"/>
+                    <Label text="Port:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField fx:id="proxyPortTextField" GridPane.rowIndex="1" GridPane.columnIndex="1" 
+                               promptText="7890" maxWidth="Infinity"/>
+                </GridPane>
+            </VBox>
+            
+            <Button text="Save Settings" fx:id="saveSettingsButton" prefWidth="140" 
+                    maxWidth="Infinity" styleClass="accent"/>
+
+            <Separator/>
+            
+            <!-- Commit Prompt 区域 -->
+            <VBox fx:id="commitPromptSection" spacing="8" VBox.vgrow="ALWAYS">
+                <Label text="Commit Prompt" styleClass="title-4"/>
+                <TextArea fx:id="customPromptTextArea" VBox.vgrow="ALWAYS"
+                          wrapText="true" prefRowCount="4"/>
+                <Button text="Save Prompt" fx:id="savePromptButton" prefWidth="140" 
+                        maxWidth="Infinity" styleClass="accent"/>
+            </VBox>
+            
+            <Separator fx:id="promptSeparator"/>
+            
+            <!-- Weekly Report Prompt 区域 -->
+            <VBox fx:id="weeklyReportPromptSection" spacing="8" VBox.vgrow="ALWAYS" 
+                  visible="false" managed="false">
+                <Label text="Report Prompt" styleClass="title-4"/>
+                <TextArea fx:id="weeklyReportPromptTextArea" VBox.vgrow="ALWAYS"
+                          wrapText="true" prefRowCount="4"/>
+                <Button text="Save Prompt" fx:id="saveReportPromptButton" prefWidth="140" 
+                        maxWidth="Infinity" styleClass="accent"/>
+            </VBox>
+        </VBox>
     </right>
 </BorderPane>
 

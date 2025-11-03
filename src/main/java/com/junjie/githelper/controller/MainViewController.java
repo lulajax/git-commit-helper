@@ -431,11 +431,15 @@ public class MainViewController {
     // ==================== Weekly Report Methods ====================
     
     private void initializeDatePickers() {
-        // 设置默认日期为最近7天
-        java.time.LocalDate endDate = java.time.LocalDate.now();
-        java.time.LocalDate startDate = endDate.minusDays(7);
-        startDatePicker.setValue(startDate);
-        endDatePicker.setValue(endDate);
+        // 设置默认日期为本周一到今天
+        java.time.LocalDate today = java.time.LocalDate.now();
+        java.time.DayOfWeek dayOfWeek = today.getDayOfWeek();
+        
+        // 计算本周一的日期
+        java.time.LocalDate monday = today.minusDays(dayOfWeek.getValue() - 1);
+        
+        startDatePicker.setValue(monday);
+        endDatePicker.setValue(today);
     }
     
     private void onFetchCommitLogs() {
