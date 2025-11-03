@@ -136,9 +136,9 @@ chmod +x build-mac.sh
 
 所有打包结果都在 `../target/installer/` 目录中：
 
-- **Windows EXE**: `GitCommitHelper-1.0.0.exe` (~200MB)
-- **Windows 便携版**: `GitCommitHelper/` 文件夹 (~200MB)
-- **macOS DMG**: `GitCommitHelper-1.0.0.dmg` (~200MB)
+- **Windows EXE**: `CommitPal-1.0.0.exe` (~200MB)
+- **Windows 便携版**: `CommitPal/` 文件夹 (~200MB)
+- **macOS DMG**: `CommitPal-1.0.0.dmg` (~200MB)
 
 **为什么这么大？**  
 包含了完整的 Java 运行时，用户无需单独安装 Java。

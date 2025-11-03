@@ -45,15 +45,15 @@ Write-Host "✓ 构建成功！" -ForegroundColor Green
 Write-Host "================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "便携版位置: " -NoNewline
-Write-Host "target\installer\GitCommitHelper\" -ForegroundColor Cyan
+Write-Host "target\installer\CommitPal\" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "使用方法：" -ForegroundColor Yellow
-Write-Host "  1. 将 GitCommitHelper 文件夹复制到任意位置" -ForegroundColor Gray
-Write-Host "  2. 运行 GitCommitHelper\GitCommitHelper.exe" -ForegroundColor Gray
+Write-Host "  1. 将 CommitPal 文件夹复制到任意位置" -ForegroundColor Gray
+Write-Host "  2. 运行 CommitPal\CommitPal.exe" -ForegroundColor Gray
 Write-Host ""
 Write-Host "文件夹大小：" -ForegroundColor Yellow
-if (Test-Path "target\installer\GitCommitHelper") {
-    $size = (Get-ChildItem -Path "target\installer\GitCommitHelper" -Recurse | 
+if (Test-Path "target\installer\CommitPal") {
+    $size = (Get-ChildItem -Path "target\installer\CommitPal" -Recurse | 
              Measure-Object -Property Length -Sum).Sum / 1MB
     Write-Host "  约 $([math]::Round($size, 2)) MB" -ForegroundColor Cyan
 }
@@ -65,11 +65,11 @@ $response = Read-Host
 if ($response -eq "y" -or $response -eq "Y") {
     Write-Host ""
     Write-Host "正在创建 ZIP 压缩包..." -ForegroundColor Yellow
-    $zipPath = "target\installer\GitCommitHelper-portable.zip"
+    $zipPath = "target\installer\CommitPal-portable.zip"
     if (Test-Path $zipPath) {
         Remove-Item $zipPath -Force
     }
-    Compress-Archive -Path "target\installer\GitCommitHelper\*" -DestinationPath $zipPath
+    Compress-Archive -Path "target\installer\CommitPal\*" -DestinationPath $zipPath
     Write-Host "✓ 压缩包已创建: $zipPath" -ForegroundColor Green
     
     $zipSize = (Get-Item $zipPath).Length / 1MB

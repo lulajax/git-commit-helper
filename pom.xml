@@ -120,7 +120,7 @@
                 <artifactId>jpackage-maven-plugin</artifactId>
                 <version>1.6.5</version>
                 <configuration>
-                    <name>GitCommitHelper</name>
+                    <name>CommitPal</name>
                     <appVersion>1.0.0</appVersion>
                     <vendor>Junjie</vendor>
                     <description>Git Commit Helper - 智能提交信息生成工具</description>

@@ -1,4 +1,4 @@
-name: Release GitCommitHelper
+name: Release CommitPal
 
 on:
   push:
@@ -42,22 +42,22 @@ jobs:
     - name: Rename artifact on Linux
       if: runner.os == 'Linux'
       run: |
-        mv target/installer/*.deb target/installer/GitCommitHelper-linux-amd64.deb
+        mv target/installer/*.deb target/installer/CommitPal-linux-amd64.deb
         
     - name: Rename artifact on Windows
       if: runner.os == 'Windows'
       run: |
-        mv target/installer/*.msi target/installer/GitCommitHelper-windows-amd64.msi
+        mv target/installer/*.msi target/installer/CommitPal-windows-amd64.msi
 
     - name: Rename artifact on macOS
       if: runner.os == 'macOS'
       run: |
-        mv target/installer/*.dmg target/installer/GitCommitHelper-macos-amd64.dmg
+        mv target/jpackage/*.dmg target/installer/CommitPal-macos-amd64.dmg
         
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: GitCommitHelper-${{ runner.os }}
+        name: CommitPal-${{ runner.os }}
         path: target/installer/*
 
   release:
@@ -91,8 +91,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/GitCommitHelper-Windows/GitCommitHelper-windows-amd64.msi
-        asset_name: GitCommitHelper-windows-amd64.msi
+        asset_path: artifacts/CommitPal-Windows/CommitPal-windows-amd64.msi
+        asset_name: CommitPal-windows-amd64.msi
         asset_content_type: application/x-msi
 
     - name: Upload Release Assets
@@ -101,8 +101,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/GitCommitHelper-Linux/GitCommitHelper-linux-amd64.deb
-        asset_name: GitCommitHelper-linux-amd64.deb
+        asset_path: artifacts/CommitPal-Linux/CommitPal-linux-amd64.deb
+        asset_name: CommitPal-linux-amd64.deb
         asset_content_type: application/vnd.debian.binary-package
 
     - name: Upload Release Assets
@@ -111,6 +111,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/GitCommitHelper-macOS/GitCommitHelper-macos-amd64.dmg
-        asset_name: GitCommitHelper-macos-amd64.dmg
+        asset_path: artifacts/CommitPal-macOS/CommitPal-macos-amd64.dmg
+        asset_name: CommitPal-macos-amd64.dmg
         asset_content_type: application/x-apple-diskimage

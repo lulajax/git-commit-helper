@@ -55,9 +55,9 @@ chmod +x build-mac.sh
 #### 3. 获取结果
 
 打包完成后，查看 `../target/installer/` 目录：
-- Windows EXE: `GitCommitHelper-1.0.0.exe`
-- Windows 便携版: `GitCommitHelper/` 文件夹
-- macOS DMG: `GitCommitHelper-1.0.0.dmg`
+- Windows EXE: `CommitPal-1.0.0.exe`
+- Windows 便携版: `CommitPal/` 文件夹
+- macOS DMG: `CommitPal-1.0.0.dmg`
 
 ---
 
@@ -175,7 +175,7 @@ mvn clean package
 mvn jpackage:jpackage -Djpackage.type=exe
 ```
 
-**输出**：`target\installer\GitCommitHelper-1.0.0.exe`
+**输出**：`target\installer\CommitPal-1.0.0.exe`
 
 **特性**：
 - 自动创建开始菜单项
@@ -197,11 +197,11 @@ cd packaging
 .\build-portable.ps1
 ```
 
-**输出**：`target\installer\GitCommitHelper\` 文件夹
+**输出**：`target\installer\CommitPal\` 文件夹
 
 **使用方法**：
-1. 复制整个 `GitCommitHelper` 文件夹到任意位置
-2. 运行 `GitCommitHelper\GitCommitHelper.exe`
+1. 复制整个 `CommitPal` 文件夹到任意位置
+2. 运行 `CommitPal\CommitPal.exe`
 
 **优点**：
 - 无需安装，解压即用
@@ -227,7 +227,7 @@ chmod +x build-mac.sh
 ./build-mac.sh
 ```
 
-**输出**：`target/installer/GitCommitHelper-1.0.0.dmg`
+**输出**：`target/installer/CommitPal-1.0.0.dmg`
 
 **安装方法**：
 1. 双击 .dmg 文件
@@ -295,13 +295,13 @@ cd packaging
 # 3. 等待打包完成（首次约 5-10 分钟）
 
 # 4. 测试运行
-cd ..\target\installer\GitCommitHelper
-.\GitCommitHelper.exe
+cd ..\target\installer\CommitPal
+.\CommitPal.exe
 
 # 5. 如果需要分发，创建 ZIP
 cd ..\..
-Compress-Archive -Path "target\installer\GitCommitHelper" `
-                 -DestinationPath "GitCommitHelper-portable.zip"
+Compress-Archive -Path "target\installer\CommitPal" `
+                 -DestinationPath "CommitPal-portable.zip"
 ```
 
 ### 场景 2：制作专业安装程序
@@ -323,7 +323,7 @@ cd packaging
 
 # 5. 测试安装程序
 cd ..\target\installer
-.\GitCommitHelper-1.0.0.exe
+.\CommitPal-1.0.0.exe
 ```
 
 ### 场景 3：在 macOS 上打包
@@ -337,11 +337,11 @@ chmod +x build-mac.sh
 ./build-mac.sh
 
 # 3. 测试 DMG
-open ../target/installer/GitCommitHelper-1.0.0.dmg
+open ../target/installer/CommitPal-1.0.0.dmg
 
 # 4. 拖拽到 Applications 安装
 # 5. 从 Applications 运行测试
-open /Applications/GitCommitHelper.app
+open /Applications/CommitPal.app
 ```
 
 ### 场景 4：添加自定义图标
@@ -482,11 +482,11 @@ Copy-Item "your-icon.ico" "..\src\main\resources\icon.ico"
 **排查步骤**：
 ```powershell
 # 1. 检查日志
-cd %APPDATA%\GitCommitHelper\logs
+cd %APPDATA%\CommitPal\logs
 
 # 2. 命令行运行查看错误
-cd "C:\Program Files\GitCommitHelper"
-.\GitCommitHelper.exe
+cd "C:\Program Files\CommitPal"
+.\CommitPal.exe
 ```
 
 **常见原因和解决方案**：
@@ -557,7 +557,7 @@ cd packaging
 
 # 分发给测试人员
 cd ..
-Compress-Archive -Path "target\installer\GitCommitHelper" `
+Compress-Archive -Path "target\installer\CommitPal" `
                  -DestinationPath "test-build.zip"
 ```
 
@@ -609,14 +609,14 @@ cd packaging
 # 使用 signtool 签名（需要代码签名证书）
 signtool sign /f cert.pfx /p password `
   /t http://timestamp.digicert.com `
-  GitCommitHelper-1.0.0.exe
+  CommitPal-1.0.0.exe
 ```
 
 ### 公证（macOS）
 
 ```bash
 # 使用 Apple Developer 账号公证应用
-xcrun altool --notarize-app --file GitCommitHelper-1.0.0.dmg \
+xcrun altool --notarize-app --file CommitPal-1.0.0.dmg \
   --primary-bundle-id com.junjie.githelper \
   --username your@email.com --password @keychain:AC_PASSWORD
 ```
