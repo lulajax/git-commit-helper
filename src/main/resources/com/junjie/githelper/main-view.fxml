@@ -5,69 +5,132 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.junjie.githelper.controller.MainViewController"
-            prefHeight="600.0" prefWidth="1000.0">
+            minHeight="400.0" minWidth="750.0" prefHeight="700.0" prefWidth="1200.0">
     <left>
-        <VBox spacing="10" prefWidth="200" style="-fx-padding: 10;">
-            <Label text="Projects" style="-fx-font-weight: bold;"/>
-            <ListView fx:id="projectListView"/>
-            <HBox spacing="10">
-                <Button text="+" fx:id="addProjectButton"/>
-                <Button text="-" fx:id="removeProjectButton"/>
+        <VBox spacing="10" minWidth="150" prefWidth="220" maxWidth="300" style="-fx-padding: 10;">
+            <Label text="Projects" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <ListView fx:id="projectListView" VBox.vgrow="ALWAYS" minHeight="150"/>
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="+" fx:id="addProjectButton" prefWidth="60"/>
+                <Button text="-" fx:id="removeProjectButton" prefWidth="60"/>
             </HBox>
         </VBox>
     </left>
 
     <center>
-        <VBox spacing="10" style="-fx-padding: 10;">
-            <Label text="Staged Changes" style="-fx-font-weight: bold;"/>
-            <TextArea fx:id="stagedChangesTextArea" editable="false" prefHeight="250" wrapText="true"/>
-            <Button text="Refresh" fx:id="refreshButton"/>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
+            <!-- 提交信息 Tab -->
+            <Tab fx:id="commitTab" text="提交信息">
+                <ScrollPane fitToWidth="true" fitToHeight="true">
+                    <VBox spacing="10" style="-fx-padding: 10;">
+                        <Label text="Staged Changes" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextArea fx:id="stagedChangesTextArea" editable="false" wrapText="true" 
+                                  minHeight="100" prefHeight="250" prefRowCount="10"/>
+                        <Button text="Refresh" fx:id="refreshButton" prefWidth="100"/>
 
-            <Label text="Commit Message" style="-fx-font-weight: bold;"/>
-            <TextArea fx:id="commitMessageTextArea" prefHeight="200" wrapText="true"/>
-            <HBox spacing="10">
-                <Button text="Generate" fx:id="generateButton"/>
-                <Button text="Copy" fx:id="copyButton"/>
-                <Button text="Commit" fx:id="commitButton"/>
-            </HBox>
-        </VBox>
+                        <Label text="Commit Message" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextArea fx:id="commitMessageTextArea" wrapText="true" 
+                                  minHeight="80" prefHeight="200" prefRowCount="8"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Button text="Generate" fx:id="generateButton" prefWidth="100"/>
+                            <Button text="Copy" fx:id="copyButton" prefWidth="100"/>
+                            <Button text="Commit" fx:id="commitButton" prefWidth="100"/>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+            
+            <!-- 研发周报 Tab -->
+            <Tab fx:id="weeklyReportTab" text="研发周报">
+                <ScrollPane fitToWidth="true" fitToHeight="true">
+                    <VBox spacing="10" style="-fx-padding: 10;">
+                        <Label text="选择时间段" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-flex-wrap: wrap;">
+                            <Label text="开始日期:"/>
+                            <DatePicker fx:id="startDatePicker" promptText="选择开始日期" prefWidth="150"/>
+                            <Label text="结束日期:"/>
+                            <DatePicker fx:id="endDatePicker" promptText="选择结束日期" prefWidth="150"/>
+                            <Button text="获取提交日志" fx:id="fetchLogsButton" prefWidth="120"/>
+                        </HBox>
+                        
+                        <Label text="提交日志" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextArea fx:id="commitLogsTextArea" editable="false" wrapText="true" 
+                                  minHeight="100" prefHeight="200" prefRowCount="8"/>
+                        
+                        <Label text="研发周报" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <TextArea fx:id="weeklyReportTextArea" wrapText="true" 
+                                  minHeight="100" prefHeight="200" prefRowCount="8"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Button text="生成周报" fx:id="generateReportButton" prefWidth="100"/>
+                            <Button text="复制周报" fx:id="copyReportButton" prefWidth="100"/>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+        </TabPane>
     </center>
 
     <right>
-        <ScrollPane fitToWidth="true">
-            <VBox spacing="10" prefWidth="250" style="-fx-padding: 10;">
-                <Label text="LLM Settings" style="-fx-font-weight: bold;"/>
-                <GridPane hgap="10" vgap="5">
+        <ScrollPane fitToWidth="true" minWidth="200" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+            <VBox spacing="10" minWidth="190" prefWidth="280" maxWidth="400" style="-fx-padding: 10;">
+                <Label text="LLM Settings" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <GridPane hgap="8" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="60" prefWidth="75" hgrow="NEVER"/>
+                        <ColumnConstraints minWidth="100" prefWidth="150" hgrow="ALWAYS"/>
+                    </columnConstraints>
                     <Label text="Provider:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <TextField fx:id="providerTextField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <TextField fx:id="providerTextField" GridPane.rowIndex="0" GridPane.columnIndex="1" 
+                               maxWidth="Infinity"/>
                     <Label text="API Key:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <PasswordField fx:id="apiKeyField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <PasswordField fx:id="apiKeyField" GridPane.rowIndex="1" GridPane.columnIndex="1" 
+                                   maxWidth="Infinity"/>
                     <Label text="Model:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <TextField fx:id="modelTextField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <TextField fx:id="modelTextField" GridPane.rowIndex="2" GridPane.columnIndex="1" 
+                               maxWidth="Infinity"/>
                     <Label text="Base URL:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <TextField fx:id="baseUrlTextField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <TextField fx:id="baseUrlTextField" GridPane.rowIndex="3" GridPane.columnIndex="1" 
+                               maxWidth="Infinity"/>
                 </GridPane>
                 
                 <Separator/>
                 
-                <Label text="Proxy Settings" style="-fx-font-weight: bold;"/>
+                <Label text="Proxy Settings" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
                 <CheckBox fx:id="useProxyCheckBox" text="Enable Proxy"/>
-                <GridPane hgap="10" vgap="5">
+                <GridPane hgap="8" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="60" prefWidth="75" hgrow="NEVER"/>
+                        <ColumnConstraints minWidth="100" prefWidth="150" hgrow="ALWAYS"/>
+                    </columnConstraints>
                     <Label text="Proxy Host:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                     <TextField fx:id="proxyHostTextField" GridPane.rowIndex="0" GridPane.columnIndex="1" 
-                               promptText="127.0.0.1"/>
+                               promptText="127.0.0.1" maxWidth="Infinity"/>
                     <Label text="Proxy Port:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                     <TextField fx:id="proxyPortTextField" GridPane.rowIndex="1" GridPane.columnIndex="1" 
-                               promptText="7890"/>
+                               promptText="7890" maxWidth="Infinity"/>
                 </GridPane>
                 
-                <Button text="Save Settings" fx:id="saveSettingsButton"/>
+                <Button text="Save Settings" fx:id="saveSettingsButton" prefWidth="130" maxWidth="Infinity"/>
 
                 <Separator/>
-
-                <Label text="Custom Prompt" style="-fx-font-weight: bold;"/>
-                <TextArea fx:id="customPromptTextArea" prefHeight="150" wrapText="true"/>
-                <Button text="Save Prompt" fx:id="savePromptButton"/>
+                
+                <!-- Commit Prompt 区域 -->
+                <VBox fx:id="commitPromptSection" spacing="8">
+                    <Label text="Commit Prompt" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                    <TextArea fx:id="customPromptTextArea" prefHeight="100" minHeight="60" 
+                              wrapText="true" prefRowCount="5"/>
+                    <Button text="Save Commit Prompt" fx:id="savePromptButton" prefWidth="130" maxWidth="Infinity"/>
+                </VBox>
+                
+                <Separator fx:id="promptSeparator"/>
+                
+                <!-- Weekly Report Prompt 区域 -->
+                <VBox fx:id="weeklyReportPromptSection" spacing="8" visible="false" managed="false">
+                    <Label text="Weekly Report Prompt" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                    <TextArea fx:id="weeklyReportPromptTextArea" prefHeight="100" minHeight="60" 
+                              wrapText="true" prefRowCount="5"/>
+                    <Button text="Save Report Prompt" fx:id="saveReportPromptButton" prefWidth="130" maxWidth="Infinity"/>
+                </VBox>
             </VBox>
         </ScrollPane>
     </right>

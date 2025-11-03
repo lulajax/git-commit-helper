@@ -3,6 +3,7 @@ package com.junjie.githelper.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.scene.input.Clipboard;
@@ -28,13 +29,27 @@ public class MainViewController {
     @FXML private Button addProjectButton;
     @FXML private Button removeProjectButton;
 
-    // Center Pane
+    // Center Pane - TabPane
+    @FXML private javafx.scene.control.TabPane mainTabPane;
+    @FXML private javafx.scene.control.Tab commitTab;
+    @FXML private javafx.scene.control.Tab weeklyReportTab;
+
+    // Center Pane - Commit Tab
     @FXML private TextArea stagedChangesTextArea;
     @FXML private Button refreshButton;
     @FXML private TextArea commitMessageTextArea;
     @FXML private Button generateButton;
     @FXML private Button copyButton;
     @FXML private Button commitButton;
+    
+    // Center Pane - Weekly Report Tab
+    @FXML private javafx.scene.control.DatePicker startDatePicker;
+    @FXML private javafx.scene.control.DatePicker endDatePicker;
+    @FXML private Button fetchLogsButton;
+    @FXML private TextArea commitLogsTextArea;
+    @FXML private TextArea weeklyReportTextArea;
+    @FXML private Button generateReportButton;
+    @FXML private Button copyReportButton;
 
     // Right Pane
     @FXML private TextField providerTextField;
@@ -45,8 +60,12 @@ public class MainViewController {
     @FXML private TextField proxyHostTextField;
     @FXML private TextField proxyPortTextField;
     @FXML private Button saveSettingsButton;
+    @FXML private VBox commitPromptSection;
     @FXML private TextArea customPromptTextArea;
     @FXML private Button savePromptButton;
+    @FXML private VBox weeklyReportPromptSection;
+    @FXML private TextArea weeklyReportPromptTextArea;
+    @FXML private Button saveReportPromptButton;
 
     private ConfigService configService;
     private GitService gitService;
@@ -71,7 +90,7 @@ public class MainViewController {
                 (observable, oldValue, newValue) -> onProjectSelected(newValue)
         );
 
-        // Add button actions
+        // Add button actions - Commit Tab
         addProjectButton.setOnAction(event -> onAddProject());
         removeProjectButton.setOnAction(event -> onRemoveProject());
         refreshButton.setOnAction(event -> refreshStagedChanges());
@@ -81,9 +100,26 @@ public class MainViewController {
         copyButton.setOnAction(event -> onCopy());
         commitButton.setOnAction(event -> onCommit());
         
+        // Add button actions - Weekly Report Tab
+        fetchLogsButton.setOnAction(event -> onFetchCommitLogs());
+        generateReportButton.setOnAction(event -> onGenerateWeeklyReport());
+        copyReportButton.setOnAction(event -> onCopyWeeklyReport());
+        saveReportPromptButton.setOnAction(event -> onSaveReportPrompt());
+        
         // Bind proxy input fields to checkbox state
         proxyHostTextField.disableProperty().bind(useProxyCheckBox.selectedProperty().not());
         proxyPortTextField.disableProperty().bind(useProxyCheckBox.selectedProperty().not());
+        
+        // Initialize date pickers with default values (last 7 days)
+        initializeDatePickers();
+        
+        // Listen for Tab selection changes to show/hide corresponding prompt sections
+        mainTabPane.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldTab, newTab) -> updatePromptSectionVisibility(newTab)
+        );
+        
+        // Initialize prompt section visibility
+        updatePromptSectionVisibility(mainTabPane.getSelectionModel().getSelectedItem());
     }
 
     private void onCopy() {
@@ -386,6 +422,174 @@ public class MainViewController {
         }
         if (appConfig.llm_settings().proxy_port() != null) {
             proxyPortTextField.setText(String.valueOf(appConfig.llm_settings().proxy_port()));
+        }
+        
+        // Populate Weekly Report Prompt
+        weeklyReportPromptTextArea.setText(appConfig.getWeeklyReportPrompt());
+    }
+    
+    // ==================== Weekly Report Methods ====================
+    
+    private void initializeDatePickers() {
+        // 设置默认日期为最近7天
+        java.time.LocalDate endDate = java.time.LocalDate.now();
+        java.time.LocalDate startDate = endDate.minusDays(7);
+        startDatePicker.setValue(startDate);
+        endDatePicker.setValue(endDate);
+    }
+    
+    private void onFetchCommitLogs() {
+        Project selectedProject = projectListView.getSelectionModel().getSelectedItem();
+        if (selectedProject == null) {
+            commitLogsTextArea.setText("请先选择一个项目。");
+            return;
+        }
+        
+        java.time.LocalDate startDate = startDatePicker.getValue();
+        java.time.LocalDate endDate = endDatePicker.getValue();
+        
+        if (startDate == null || endDate == null) {
+            commitLogsTextArea.setText("请选择开始和结束日期。");
+            return;
+        }
+        
+        if (startDate.isAfter(endDate)) {
+            commitLogsTextArea.setText("开始日期不能晚于结束日期。");
+            return;
+        }
+        
+        commitLogsTextArea.setText("正在获取提交日志...");
+        
+        // 在后台线程获取日志（不包含代码变更，避免上下文过长）
+        new Thread(() -> {
+            try {
+                String logs = gitService.getCommitLogs(selectedProject, startDate, endDate, false);
+                Platform.runLater(() -> commitLogsTextArea.setText(logs));
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    commitLogsTextArea.setText("获取提交日志失败: " + e.getMessage());
+                    e.printStackTrace();
+                });
+            }
+        }).start();
+    }
+    
+    private void onGenerateWeeklyReport() {
+        String commitLogs = commitLogsTextArea.getText();
+        if (commitLogs.isEmpty() || commitLogs.startsWith("请") || commitLogs.startsWith("正在") || commitLogs.startsWith("获取")) {
+            weeklyReportTextArea.setText("请先获取提交日志。");
+            return;
+        }
+        
+        String reportPrompt = weeklyReportPromptTextArea.getText();
+        if (reportPrompt.trim().isEmpty()) {
+            weeklyReportTextArea.setText("周报提示词不能为空。");
+            return;
+        }
+        
+        // 解析代理端口
+        Integer proxyPort = null;
+        if (!proxyPortTextField.getText().trim().isEmpty()) {
+            try {
+                proxyPort = Integer.parseInt(proxyPortTextField.getText().trim());
+            } catch (NumberFormatException e) {
+                weeklyReportTextArea.setText("Error: 代理端口号无效。");
+                return;
+            }
+        }
+        
+        LLMSettings settings = new LLMSettings(
+                providerTextField.getText(),
+                apiKeyField.getText(),
+                modelTextField.getText(),
+                baseUrlTextField.getText(),
+                proxyHostTextField.getText(),
+                proxyPort,
+                useProxyCheckBox.isSelected()
+        );
+        
+        weeklyReportTextArea.setText("正在生成研发周报...");
+        
+        // 在后台线程生成周报
+        new Thread(() -> {
+            try {
+                String weeklyReport = llmService.generateCommitMessage(settings, reportPrompt, commitLogs);
+                Platform.runLater(() -> weeklyReportTextArea.setText(weeklyReport));
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    weeklyReportTextArea.setText("生成周报失败: " + e.getMessage());
+                    e.printStackTrace();
+                });
+            }
+        }).start();
+    }
+    
+    private void onCopyWeeklyReport() {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(weeklyReportTextArea.getText());
+        clipboard.setContent(content);
+        
+        // 显示提示
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("复制成功");
+        alert.setHeaderText(null);
+        alert.setContentText("周报已复制到剪贴板。");
+        alert.showAndWait();
+    }
+    
+    private void onSaveReportPrompt() {
+        String newPrompt = weeklyReportPromptTextArea.getText();
+        if (newPrompt.trim().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("提示");
+            alert.setHeaderText(null);
+            alert.setContentText("周报提示词不能为空。");
+            alert.showAndWait();
+            return;
+        }
+        
+        appConfig = new AppConfig(
+                appConfig.version(),
+                appConfig.llm_settings(),
+                appConfig.projects(),
+                appConfig.selected_project_id(),
+                newPrompt
+        );
+        
+        try {
+            configService.saveConfig(appConfig);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("保存成功");
+            alert.setHeaderText(null);
+            alert.setContentText("周报提示词已保存。");
+            alert.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("错误");
+            alert.setHeaderText("保存失败");
+            alert.setContentText("保存周报提示词时出错: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+    
+    /**
+     * 根据选中的 Tab 更新提示词区域的可见性
+     */
+    private void updatePromptSectionVisibility(javafx.scene.control.Tab selectedTab) {
+        if (selectedTab == commitTab) {
+            // 显示提交信息提示词，隐藏周报提示词
+            commitPromptSection.setVisible(true);
+            commitPromptSection.setManaged(true);
+            weeklyReportPromptSection.setVisible(false);
+            weeklyReportPromptSection.setManaged(false);
+        } else if (selectedTab == weeklyReportTab) {
+            // 显示周报提示词，隐藏提交信息提示词
+            commitPromptSection.setVisible(false);
+            commitPromptSection.setManaged(false);
+            weeklyReportPromptSection.setVisible(true);
+            weeklyReportPromptSection.setManaged(true);
         }
     }
 }
