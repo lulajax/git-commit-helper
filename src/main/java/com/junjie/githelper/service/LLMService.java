@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.junjie.githelper.model.LLMSettings;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +27,21 @@ public class LLMService {
 
         String jsonBody = gson.toJson(requestBody);
 
-        HttpResponse response = HttpRequest.post(settings.base_url() + "/chat/completions")
+        // 构建 HTTP 请求
+        HttpRequest request = HttpRequest.post(settings.base_url() + "/chat/completions")
                 .header("Authorization", "Bearer " + settings.api_key())
                 .header("Content-Type", "application/json")
                 .body(jsonBody)
-                .timeout(30000) // 30 seconds timeout
-                .execute();
+                .timeout(30000); // 30 seconds timeout
+
+        // 如果启用了代理，则设置代理
+        if (settings.isProxyEnabled()) {
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, 
+                new InetSocketAddress(settings.proxy_host(), settings.proxy_port()));
+            request.setProxy(proxy);
+        }
+
+        HttpResponse response = request.execute();
 
         if (response.isOk()) {
             String responseBody = response.body();
@@ -45,3 +56,4 @@ public class LLMService {
         }
     }
 }
+

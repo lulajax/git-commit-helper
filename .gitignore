@@ -6,6 +6,11 @@
 /.gradle/
 logs/
 .cursor/
-.vscode/
 .claude/
 *.code-workspace
+
+# Maven
+target/
+target/*
+# Keep lib directory with JavaFX dependencies
+# lib/

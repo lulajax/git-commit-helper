@@ -41,6 +41,9 @@ public class MainViewController {
     @FXML private PasswordField apiKeyField;
     @FXML private TextField modelTextField;
     @FXML private TextField baseUrlTextField;
+    @FXML private CheckBox useProxyCheckBox;
+    @FXML private TextField proxyHostTextField;
+    @FXML private TextField proxyPortTextField;
     @FXML private Button saveSettingsButton;
     @FXML private TextArea customPromptTextArea;
     @FXML private Button savePromptButton;
@@ -77,6 +80,10 @@ public class MainViewController {
         savePromptButton.setOnAction(event -> onSavePrompt());
         copyButton.setOnAction(event -> onCopy());
         commitButton.setOnAction(event -> onCommit());
+        
+        // Bind proxy input fields to checkbox state
+        proxyHostTextField.disableProperty().bind(useProxyCheckBox.selectedProperty().not());
+        proxyPortTextField.disableProperty().bind(useProxyCheckBox.selectedProperty().not());
     }
 
     private void onCopy() {
@@ -117,18 +124,46 @@ public class MainViewController {
     }
 
     private void onSaveSettings() {
+        // 解析代理端口
+        Integer proxyPort = null;
+        if (!proxyPortTextField.getText().trim().isEmpty()) {
+            try {
+                proxyPort = Integer.parseInt(proxyPortTextField.getText().trim());
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid Port");
+                alert.setHeaderText(null);
+                alert.setContentText("Proxy port must be a valid number.");
+                alert.showAndWait();
+                return;
+            }
+        }
+        
         LLMSettings newSettings = new LLMSettings(
                 providerTextField.getText(),
                 apiKeyField.getText(),
                 modelTextField.getText(),
-                baseUrlTextField.getText()
+                baseUrlTextField.getText(),
+                proxyHostTextField.getText(),
+                proxyPort,
+                useProxyCheckBox.isSelected()
         );
         appConfig = new AppConfig(appConfig.version(), newSettings, appConfig.projects(), appConfig.selected_project_id());
         try {
             configService.saveConfig(appConfig);
-            // Optionally, show a confirmation alert
+            // Show confirmation alert
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Settings Saved");
+            alert.setHeaderText(null);
+            alert.setContentText("LLM and proxy settings have been saved successfully.");
+            alert.showAndWait();
         } catch (IOException e) {
-            e.printStackTrace(); // Show error alert
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to save settings");
+            alert.setContentText("An error occurred while saving the settings: " + e.getMessage());
+            alert.showAndWait();
         }
     }
 
@@ -170,11 +205,26 @@ public class MainViewController {
         }
 
         String customPrompt = customPromptTextArea.getText();
+        
+        // 解析代理端口
+        Integer proxyPort = null;
+        if (!proxyPortTextField.getText().trim().isEmpty()) {
+            try {
+                proxyPort = Integer.parseInt(proxyPortTextField.getText().trim());
+            } catch (NumberFormatException e) {
+                commitMessageTextArea.setText("Error: Invalid proxy port number.");
+                return;
+            }
+        }
+        
         LLMSettings settings = new LLMSettings(
                 providerTextField.getText(),
                 apiKeyField.getText(),
                 modelTextField.getText(),
-                baseUrlTextField.getText()
+                baseUrlTextField.getText(),
+                proxyHostTextField.getText(),
+                proxyPort,
+                useProxyCheckBox.isSelected()
         );
 
         commitMessageTextArea.setText("Generating commit message...");
@@ -328,5 +378,14 @@ public class MainViewController {
         apiKeyField.setText(appConfig.llm_settings().api_key());
         modelTextField.setText(appConfig.llm_settings().model());
         baseUrlTextField.setText(appConfig.llm_settings().base_url());
+        
+        // Populate Proxy Settings
+        useProxyCheckBox.setSelected(Boolean.TRUE.equals(appConfig.llm_settings().use_proxy()));
+        if (appConfig.llm_settings().proxy_host() != null) {
+            proxyHostTextField.setText(appConfig.llm_settings().proxy_host());
+        }
+        if (appConfig.llm_settings().proxy_port() != null) {
+            proxyPortTextField.setText(String.valueOf(appConfig.llm_settings().proxy_port()));
+        }
     }
 }
