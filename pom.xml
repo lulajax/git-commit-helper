@@ -15,6 +15,8 @@
         <hutool.version>5.8.25</hutool.version>
         <atlantafx.version>2.0.1</atlantafx.version>
         <jpackage.type>${env.JPACKAGE_TYPE}</jpackage.type>
+        <!-- OS-specific module path -->
+        <jpackage.module.path>lib/app/lib</jpackage.module.path>
     </properties>
 
     <dependencies>
@@ -176,6 +178,12 @@
                     <mainJar>commit-pal-${project.version}.jar</mainJar>
                     <mainClass>com.junjie.githelper.MainApplication</mainClass>
                     <type>${jpackage.type}</type>
+
+                    <!-- Linux 配置 -->
+                    <linuxShortcut>true</linuxShortcut>
+                    <linuxMenuGroup>Development</linuxMenuGroup>
+                    <resourceDir>${project.basedir}/src/main/resources/linux</resourceDir>
+                    
                     <!-- <winConsole>true</winConsole> -->
                     
                     <!-- macOS 配置 - 跳过签名 -->
@@ -184,15 +192,40 @@
                     <javaOptions>
                         <option>-Dfile.encoding=UTF-8</option>
                         <option>--module-path</option>
-                        <option>app/lib</option>
+                        <option>${jpackage.module.path}</option>
                         <option>--add-modules</option>
                         <option>javafx.controls,javafx.fxml</option>
                     </javaOptions>
                     
-                    <!-- 图标配置（可选）- 如果没有图标文件，可以注释掉这一行 -->
-                    <!-- <icon>${project.basedir}/src/main/resources/icon.ico</icon> -->
+                    <!-- 图标配置 -->
+                    <icon>${project.basedir}/src/main/resources/icon.png</icon>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>windows-module-path</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <jpackage.module.path>app/lib</jpackage.module.path>
+            </properties>
+        </profile>
+        <profile>
+            <id>mac-module-path</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <jpackage.module.path>app/lib</jpackage.module.path>
+            </properties>
+        </profile>
+    </profiles>
 </project>

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=CommitPal
+Comment=CommitPal - 智能提交信息生成工具
+Exec=/opt/CommitPal/bin/CommitPal
+Icon=CommitPal
+Terminal=false
+Type=Application
+Categories=Development;
