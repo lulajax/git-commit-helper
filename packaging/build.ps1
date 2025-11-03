@@ -2,7 +2,7 @@
 # 跨平台打包脚本（PowerShell Core）
 
 Write-Host "================================" -ForegroundColor Green
-Write-Host "Git Commit Helper - 自动打包工具" -ForegroundColor Green
+Write-Host Commit-Pal - 自动打包工具" -ForegroundColor Green
 Write-Host "================================" -ForegroundColor Green
 Write-Host ""
 

@@ -121,7 +121,7 @@
                 <version>3.3.1</version>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
+                        <id>copy-jar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -135,9 +135,20 @@
                                         <include>*.jar</include>
                                     </includes>
                                 </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-libs</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/jpackage-input/lib</outputDirectory>
+                            <resources>
                                 <resource>
                                     <directory>${project.build.directory}/lib</directory>
-                                    <targetPath>lib</targetPath>
                                 </resource>
                             </resources>
                         </configuration>
@@ -153,7 +164,7 @@
                 <executions>
                     <execution>
                         <id>jpackage</id>
-                        <phase>package</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>jpackage</goal>
                         </goals>
@@ -163,13 +174,17 @@
                     <name>CommitPal</name>
                     <appVersion>1.0.0</appVersion>
                     <vendor>Junjie</vendor>
-                    <description>Git Commit Helper - 智能提交信息生成工具</description>
+                    <description>Commit-Pal - 智能提交信息生成工具</description>
                     <destination>${project.build.directory}/installer</destination>
                     <input>${project.build.directory}/jpackage-input</input>
                     <mainJar>commit-pal-${project.version}.jar</mainJar>
                     <mainClass>com.junjie.githelper.MainApplication</mainClass>
                     <type>${env.JPACKAGE_TYPE}</type>
                     <!-- <winConsole>true</winConsole> -->
+                    
+                    <!-- macOS 配置 - 跳过签名 -->
+                    <macSign>false</macSign>
+                    
                     <javaOptions>
                         <option>-Dfile.encoding=UTF-8</option>
                         <option>--module-path</option>

@@ -1,4 +1,4 @@
-# Git Commit Helper - 打包指南
+# Commit-Pal - 打包指南
 
 本目录包含所有打包相关的脚本和文档，帮助你将项目打包成 Windows 和 macOS 的安装程序。
 
