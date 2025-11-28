@@ -11,10 +11,10 @@ public record AppConfig(
 ) {
     // 默认构造器，提供默认的项目报告提示词
     public AppConfig(String version, LLMSettings llm_settings, List<Project> projects, String selected_project_id) {
-        this(version, llm_settings, projects, selected_project_id, getDefaultWeeklyReportPrompt());
+        this(version, llm_settings, projects, selected_project_id, defaultWeeklyReportPrompt());
     }
     
-    private static String getDefaultWeeklyReportPrompt() {
+    public static String defaultWeeklyReportPrompt() {
         return """
                 Please generate a concise commit report based on the following Git commit logs.
 
@@ -32,6 +32,6 @@ public record AppConfig(
     }
     
     public String getWeeklyReportPrompt() {
-        return weekly_report_prompt != null ? weekly_report_prompt : getDefaultWeeklyReportPrompt();
+        return weekly_report_prompt != null ? weekly_report_prompt : defaultWeeklyReportPrompt();
     }
 }

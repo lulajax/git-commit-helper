@@ -184,7 +184,7 @@ public class MainViewController {
                 proxyPort,
                 useProxyCheckBox.isSelected()
         );
-        appConfig = new AppConfig(appConfig.version(), newSettings, appConfig.projects(), appConfig.selected_project_id());
+        appConfig = new AppConfig(appConfig.version(), newSettings, appConfig.projects(), appConfig.selected_project_id(), appConfig.weekly_report_prompt());
         try {
             configService.saveConfig(appConfig);
             // Show confirmation alert
@@ -215,14 +215,15 @@ public class MainViewController {
                 selectedProject.id(),
                 selectedProject.name(),
                 selectedProject.path(),
-                newPrompt
+                newPrompt,
+                selectedProject.weekly_report_prompt()
         );
 
         var updatedProjects = new ArrayList<>(appConfig.projects());
         int projectIndex = updatedProjects.indexOf(selectedProject);
         if (projectIndex != -1) {
             updatedProjects.set(projectIndex, updatedProject);
-            appConfig = new AppConfig(appConfig.version(), appConfig.llm_settings(), updatedProjects, appConfig.selected_project_id());
+            appConfig = new AppConfig(appConfig.version(), appConfig.llm_settings(), updatedProjects, appConfig.selected_project_id(), appConfig.weekly_report_prompt());
             try {
                 configService.saveConfig(appConfig);
                 // Refresh the list view to reflect the change
@@ -296,10 +297,12 @@ public class MainViewController {
         if (selectedProject != null) {
             // Update the custom prompt text area
             customPromptTextArea.setText(selectedProject.custom_prompt());
+            weeklyReportPromptTextArea.setText(resolveWeeklyReportPrompt(selectedProject));
             refreshStagedChanges();
             // TODO: Update and save the selected_project_id in the config
         } else {
             stagedChangesTextArea.clear();
+            weeklyReportPromptTextArea.setText(resolveWeeklyReportPrompt(null));
         }
     }
 
@@ -352,7 +355,8 @@ public class MainViewController {
                         appConfig.version(),
                         appConfig.llm_settings(),
                         updatedProjects,
-                        appConfig.selected_project_id()
+                        appConfig.selected_project_id(),
+                        appConfig.weekly_report_prompt()
                 );
 
                 try {
@@ -385,8 +389,9 @@ public class MainViewController {
                            - The message should follow the Conventional Commits specification.
                            - Use present tense (e.g., 'add feature' not 'added feature').
                            - Only output the commit message content, without any markdown formatting.
-                           - in chinese.
-                        """
+                        - in chinese.
+                        """,
+                        appConfig.getWeeklyReportPrompt()
                 );
 
                 var updatedProjects = new ArrayList<>(appConfig.projects());
@@ -396,7 +401,8 @@ public class MainViewController {
                         appConfig.version(),
                         appConfig.llm_settings(),
                         updatedProjects,
-                        appConfig.selected_project_id()
+                        appConfig.selected_project_id(),
+                        appConfig.weekly_report_prompt()
                 );
 
                 try {
@@ -451,7 +457,7 @@ public class MainViewController {
         }
         
         // Populate Weekly Report Prompt
-        weeklyReportPromptTextArea.setText(appConfig.getWeeklyReportPrompt());
+        weeklyReportPromptTextArea.setText(resolveWeeklyReportPrompt(projectListView.getSelectionModel().getSelectedItem()));
     }
     
     // ==================== Weekly Report Methods ====================
@@ -569,6 +575,16 @@ public class MainViewController {
     }
     
     private void onSaveReportPrompt() {
+        Project selectedProject = projectListView.getSelectionModel().getSelectedItem();
+        if (selectedProject == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select a project to save the commit report prompt.");
+            alert.showAndWait();
+            return;
+        }
+
         String newPrompt = weeklyReportPromptTextArea.getText();
         if (newPrompt.trim().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -579,16 +595,36 @@ public class MainViewController {
             return;
         }
         
+        Project updatedProject = new Project(
+                selectedProject.id(),
+                selectedProject.name(),
+                selectedProject.path(),
+                selectedProject.custom_prompt(),
+                newPrompt
+        );
+        var updatedProjects = new ArrayList<>(appConfig.projects());
+        int projectIndex = updatedProjects.indexOf(selectedProject);
+        if (projectIndex == -1) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to save");
+            alert.setContentText("Unable to locate the selected project in the configuration.");
+            alert.showAndWait();
+            return;
+        }
+
+        updatedProjects.set(projectIndex, updatedProject);
         appConfig = new AppConfig(
                 appConfig.version(),
                 appConfig.llm_settings(),
-                appConfig.projects(),
+                updatedProjects,
                 appConfig.selected_project_id(),
-                newPrompt
+                appConfig.weekly_report_prompt()
         );
         
         try {
             configService.saveConfig(appConfig);
+            projectListView.getItems().set(projectIndex, updatedProject);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Success");
             alert.setHeaderText(null);
@@ -602,6 +638,13 @@ public class MainViewController {
             alert.setContentText("An error occurred while saving the commit report prompt: " + e.getMessage());
             alert.showAndWait();
         }
+    }
+    
+    private String resolveWeeklyReportPrompt(Project project) {
+        if (project == null || project.weekly_report_prompt() == null || project.weekly_report_prompt().trim().isEmpty()) {
+            return appConfig != null ? appConfig.getWeeklyReportPrompt() : AppConfig.defaultWeeklyReportPrompt();
+        }
+        return project.weekly_report_prompt();
     }
     
     /**
